@@ -1,7 +1,9 @@
 import React from 'react';
-import { Stack, Text, IStackTokens, IStackStyles, Dropdown, IDropdownOption, IDropdownStyles, initializeIcons, PrimaryButton, IDropdown, Separator, ISeparatorStyles, ITextStyles, Spinner, Dialog, DialogType, IDialogContentProps, Link, TextField, ITextField, IconButton, IIconProps, ITextFieldStyles, DialogFooter, DefaultButton } from '@fluentui/react';
+import { Stack, Text, IStackTokens, IStackStyles, Dropdown, IDropdownOption, IDropdownStyles, initializeIcons, PrimaryButton, IDropdown, Separator, ISeparatorStyles, ITextStyles, Spinner, Dialog, DialogType, IDialogContentProps, DialogFooter, IImageProps, Image } from '@fluentui/react';
 import './App.css';
 import { useBoolean } from "@fluentui/react-hooks";
+
+const sessionId: string = crypto.randomUUID();
 
 const boldTextStyle: Partial<ITextStyles> = { root: { fontWeight: "bold" } };
 const stackTokens: IStackTokens = { childrenGap: 15 };
@@ -14,7 +16,6 @@ const stackStyles: Partial<IStackStyles> = {
 };
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 const separatorStyles: Partial<ISeparatorStyles> = { root: { width: "100%" } };
-const horizontallyFilledTextFieldStyle: Partial<ITextFieldStyles> = { root: { width: "100%" } };
 
 const productEditionOptions: IDropdownOption[] = [
   { key: "", text: "Select Download"},
@@ -26,23 +27,17 @@ const productLanguagesOptions: IDropdownOption[] = [ {key: "", text: "Choose one
 
 const productEditionDropdownRef = React.createRef<IDropdown>();
 const productLanguagesDropdownRef = React.createRef<IDropdown>();
-const commandTextFieldRef = React.createRef<ITextField>();
-const sessionIdTextFieldRef = React.createRef<ITextField>();
-
-const sessionIdDialogProps: IDialogContentProps = {
-  type: DialogType.normal,
-  title: "Session ID required",
-  subText: "In order to continue, a valid session ID from the software download website is required."
-};
 
 const errorDialogProps: IDialogContentProps = {
   type: DialogType.normal,
   title: "Error"
 }
 
-const copyButtonProps: IIconProps = { iconName: "copy" };
+const clearProps: Partial<IImageProps> = {
+  src: `https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`
+};
 
-let sessionId: string = "";
+
 let downloadHeader: string = "";
 let errorMessage: string = "";
 let downloadLinks: { text: string; url: string; }[] = [];
@@ -74,10 +69,6 @@ export const App: React.FunctionComponent = () => {
     setTrue: showProductLanguagesSpinner,
     setFalse: hideProductLanguagesSpinner
   }] = useBoolean(false);
-  const [sessionIdDialogHidden, {
-    setTrue: hideSessionIdDialog,
-    setFalse: showSessionIdDialog
-  }] = useBoolean(true);
   const [errorDialogHidden, {
     setTrue: hideErrorDialog,
     setFalse: showErrorDialog
@@ -250,48 +241,10 @@ export const App: React.FunctionComponent = () => {
       </Stack>
       <PrimaryButton
         text="Download"
-        onClick={showSessionIdDialog}
+        onClick={onDownloadButtonClick}
         disabled={shouldShowProductEditionSpinner ? true : false} />
       {productLanguagesBlock}
       {downloadBlock}
-      <Dialog
-        hidden={sessionIdDialogHidden}
-        onDismiss={showSessionIdDialog}
-        dialogContentProps={sessionIdDialogProps}
-      >
-        <Stack tokens={stackTokens}>
-          <Text>
-            <Text>To obtain one, open </Text>
-            <Link
-              href="https://www.microsoft.com/en-us/software-download/windows11"
-              target="_blank">this link</Link>
-            <Text> in a new tab and paste the following command on your browser's console:</Text>
-          </Text>
-          <Stack horizontal>
-            <TextField
-              value="document.getElementById('session-id').value"
-              componentRef={commandTextFieldRef}
-              readOnly
-              styles={horizontallyFilledTextFieldStyle}
-            />
-            <IconButton
-              iconProps={copyButtonProps}
-              onClick={() => navigator.clipboard.writeText(commandTextFieldRef.current?.value!)}
-            />
-          </Stack>
-          <Text>Then paste the token here:</Text>
-          <TextField componentRef={sessionIdTextFieldRef} placeholder="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"></TextField>
-        </Stack>
-
-        <DialogFooter>
-          <PrimaryButton text="Continue" onClick={() => {
-            sessionId = sessionIdTextFieldRef.current?.value!;
-            hideSessionIdDialog();
-            onDownloadButtonClick();
-          }} />
-          <DefaultButton text="Cancel" onClick={hideSessionIdDialog} />
-        </DialogFooter>
-      </Dialog>
       <Dialog
         hidden={errorDialogHidden}
         onDismiss={hideErrorDialog}
@@ -303,6 +256,7 @@ export const App: React.FunctionComponent = () => {
           <PrimaryButton text="Close" onClick={hideErrorDialog} />
         </DialogFooter>
       </Dialog>
+      <Image {...clearProps} hidden />
     </Stack>
   );
 };
