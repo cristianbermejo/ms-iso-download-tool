@@ -117,6 +117,7 @@ export const App: React.FunctionComponent = () => {
     option?: IDropdownOption,
     index?: number): void {
       setEditionSelectedToFalse();
+      downloadIsNotReady();
       productLanguagesOptions.length = 1;
   }
 
