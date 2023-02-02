@@ -1,6 +1,6 @@
 {
   "name": "ms-iso-download-tool",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@fluentui/react": "^8.104.8",
