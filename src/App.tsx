@@ -9,9 +9,9 @@ const boldTextStyle: Partial<ITextStyles> = { root: { fontWeight: "bold" } };
 const stackTokens: IStackTokens = { childrenGap: 15 };
 const stackStyles: Partial<IStackStyles> = {
   root: {
-    width: "960px",
-    minHeight: "720px",
-    margin: "50px auto 0 auto",
+    maxWidth: "960px",
+    margin: "0 auto",
+    padding: "50px 0",
   }
 };
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
@@ -224,7 +224,7 @@ export const App: React.FunctionComponent = () => {
   }
 
   return (
-    <Stack horizontalAlign="start" verticalAlign="start" verticalFill styles={stackStyles} tokens={stackTokens}>
+    <Stack horizontalAlign="start" verticalAlign="start" styles={stackStyles} tokens={stackTokens}>
       <Text variant="xxLarge">
         Download Windows Disk Image (ISO)
       </Text>
