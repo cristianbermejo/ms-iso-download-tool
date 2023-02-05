@@ -1,5 +1,5 @@
 export const ControlsService = {
-  getProductEditionLanguages(sessionId: string, productEditionId: string): Promise<{ key: string, text: string }[]> {
+  getLanguages(sessionId: string, productEditionId: string): Promise<{ key: string, text: string }[]> {
     return fetch("https://www.microsoft.com/en-us/api/controls/contentinclude/html" +
       "?pageId=a8f8f489-4c7f-463a-9ca6-5cff94d8d041" +
       "&host=www.microsoft.com" +
@@ -15,7 +15,14 @@ export const ControlsService = {
         div.innerHTML = result;
 
         if (div.querySelector("#errorModalTitle")) {
-          throw (div.querySelector("#errorModalMessage")?.textContent || "Unknown error");
+          let title = div.querySelector("#errorModalTitle")?.textContent;
+          let message = div.querySelector("#errorModalMessage")?.innerHTML;
+
+          throw Object.assign(new Error(message), {
+            title: title,
+            message: message,
+            hasError: true
+          });
         }
 
         let options = div.querySelectorAll("option");
@@ -48,7 +55,14 @@ export const ControlsService = {
         div.innerHTML = result;
 
         if (div.querySelector("#errorModalTitle")) {
-          throw (div.querySelector("#errorModalMessage")?.textContent || "Unknown error");
+          let title = div.querySelector("#errorModalTitle")?.textContent;
+          let message = div.querySelector("#errorModalMessage")?.innerHTML;
+
+          throw Object.assign(new Error(message), {
+            title: title,
+            message: message,
+            hasError: true
+          });
         }
 
         let headers = div.querySelectorAll("h2");
