@@ -1,0 +1,184 @@
+[
+  {
+    "key": "2370",
+    "text": "Windows 11, version 22H2 (v1)"
+  },
+  {
+    "key": "2360",
+    "text":"Windows 11, version 22H2",
+    "disabled": true,
+    "title": "Not available: download link doesn't work."
+  },
+  {
+    "key": "2093",
+    "text":"Windows 11, version 21H2 (v1)"
+  },
+  {
+    "key": "2069",
+    "text": "Windows 11, version 21H2"
+  },
+  {
+    "key": "2377",
+    "text": "Windows 10, version 22H2"
+  },
+  {
+    "key": "2084",
+    "text": "Windows 10, version 21H2"
+  },
+  {
+    "key": "2033",
+    "text": "Windows 10, version 21H1"
+  },
+  {
+    "key": "1880",
+    "text": "Windows 10, version 20H2 (v2)"
+  },
+  {
+    "key": "1807",
+    "text": "Windows 10, version 20H2"
+  },
+  {
+    "key": "1626",
+    "text": "Windows 10, version 2004"
+  },
+  {
+    "key": "1429",
+    "text": "Windows 10, version 1909"
+  },
+  {
+    "key": "1384",
+    "text": "Windows 10, version 1903 (v2)"
+  },
+  {
+    "key": "1214",
+    "text": "Windows 10, version 1903 (v1)"
+  },
+  {
+    "key": "1203",
+    "text": "Windows 10, version 1809 (v2)"
+  },
+  {
+    "key": "1060",
+    "text": "Windows 10, version 1809"
+  },
+  {
+    "key": "651",
+    "text": "Windows 10, version 1803"
+  },
+  {
+    "key": "655",
+    "text": "Windows 10, version 1803 (Edu)"
+  },
+  {
+    "key": "484",
+    "text": "Windows 10, version 1709"
+  },
+  {
+    "key": "363",
+    "text": "Windows 10, version 1703 (Single Language)"
+  },
+  {
+    "key": "362",
+    "text": "Windows 10, version 1703 (N)"
+  },
+  {
+    "key": "361",
+    "text": "Windows 10, version 1703"
+  },
+  {
+    "key": "246",
+    "text": "Windows 10, version 1607 (Single Language)"
+  },
+  {
+    "key": "245",
+    "text": "Windows 10, version 1607 (N)"
+  },
+  {
+    "key": "244",
+    "text": "Windows 10, version 1607"
+  },
+  {
+    "key": "184",
+    "text": "Windows 10, version 1511 (v2, Single Language)"
+  },
+  {
+    "key": "183",
+    "text": "Windows 10, version 1511 (v2, N)"
+  },
+  {
+    "key": "182",
+    "text": "Windows 10, version 1511 (v2, KN)"
+  },
+  {
+    "key": "178",
+    "text": "Windows 10, version 1511 (v2)"
+  },
+  {
+    "key": "116",
+    "text": "Windows 10, version 1511 (v1, Single Language)"
+  },
+  {
+    "key": "115",
+    "text": "Windows 10, version 1511 (v1, N)"
+  },
+  {
+    "key": "114",
+    "text": "Windows 10, version 1511 (v1, KN)"
+  },
+  {
+    "key": "109",
+    "text": "Windows 10, version 1511 (v1)"
+  },
+  {
+    "key": "106",
+    "text": "Windows 10, version 1511 (Single Language)"
+  },
+  {
+    "key": "105",
+    "text": "Windows 10, version 1511 (N)"
+  },
+  {
+    "key": "104",
+    "text": "Windows 10, version 1511 (KN)"
+  },
+  {
+    "key": "99",
+    "text": "Windows 10, version 1511"
+  },
+  {
+    "key": "82",
+    "text": "Windows 10 (Single Language)"
+  },
+  {
+    "key": "81",
+    "text": "Windows 10 (N)"
+  },
+  {
+    "key": "80",
+    "text": "Windows 10 (KN)"
+  },
+  {
+    "key": "79",
+    "text": "Windows 10"
+  },
+  {
+    "key": "62",
+    "text": "Windows 8.1 Pro (KN)"
+  },
+  {
+    "key": "61",
+    "text": "Windows 8.1 (K)"
+  },
+  {
+    "key": "55",
+    "text": "Windows 8.1 Pro (N)"
+  },
+  {
+    "key": "52",
+    "text": "Windows 8.1"
+  },
+  {
+    "key": "48",
+    "text": "Windows 8.1 (Single Language)"
+  }
+]
