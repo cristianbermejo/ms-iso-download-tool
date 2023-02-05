@@ -3,6 +3,7 @@ import { Stack, Text, initializeIcons, PrimaryButton, Separator, ISeparatorStyle
 import "./App.css";
 import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
+import importedEditionOptions from "./res/editionOptions.json";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
@@ -22,17 +23,12 @@ export const App: React.FunctionComponent = () => {
   initializeIcons();
 
   // Data and their default values
-  const defaultEditionOptions = [
-    { key: "", text: "Select Download" },
-    { key: "2370", text: "Windows 11, version 22H2" },
-    { key: "2069", text: "Windows 11, version 21H2" },
-    { key: "2377", text: "Windows 10, version 22H2" },
-  ];
-  const defaultLanguageOptions: { key: string; text: string; }[] = [];
+  const defaultEditionOptions: {key: string, text: string, disabled?: boolean, _disabledReason?: string, title?: string}[] = [{ key: "", text: "Select Download" }];
+  const defaultLanguageOptions: { key: string; text: string; }[] = [{ key: "", text: "Choose one" }];
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
-  const [editionOptions,] = useState(defaultEditionOptions);
+  const [editionOptions,] = useState(defaultEditionOptions.concat(importedEditionOptions));
   const [languageOptions, setLanguageOptions] = useState(defaultLanguageOptions);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
   const [errorData, setErrorData] = useState(defaultErrorData);
@@ -73,8 +69,7 @@ export const App: React.FunctionComponent = () => {
       actionButton={{ text: "Download", onClick: _loadLanguages }}
     />
   </>;
-
-  let languagesStep = languageOptions.length > 0 ? <>
+  let languagesStep = languageOptions.length > defaultLanguageOptions.length ? <>
     <Separator styles={separatorStyles} />
     <Step
       title="Select the product language"
@@ -95,7 +90,7 @@ export const App: React.FunctionComponent = () => {
     />
   </> : undefined;
 
-  let downloadLinksStep = donwloadLinksData.links.length > 0 ? <>
+  let downloadLinksStep = donwloadLinksData.links.length > defaultDownloadLinksData.links.length ? <>
     <Separator styles={separatorStyles} />
     <Step
       title={donwloadLinksData.title}
