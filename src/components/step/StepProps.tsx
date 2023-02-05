@@ -6,8 +6,10 @@ export type StepProps = {
     description?: string | ReactElement<ITextComponent>;
     options?: IDropdownOption<string>[];
     defaultSelectedKey?: string;
+    placeholder?: string;
     onChange?: Function;
-    errorMessage?: string;
+    infoMessage?: string;
+    errorMessages?: { dropdown?: string, textfield?: string };
     actionButton?: { text: string, onClick: Function };
     linkButtons?: { text: string, url: string }[];
 };

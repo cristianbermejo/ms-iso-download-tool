@@ -23,21 +23,39 @@ export const App: React.FunctionComponent = () => {
   initializeIcons();
 
   // Data and their default values
-  const defaultEditionOptions: {key: string, text: string, disabled?: boolean, _disabledReason?: string, title?: string}[] = [{ key: "", text: "Select Download" }];
+  const defaultEditionOptions: { key: string, text: string, disabled?: boolean, _disabledReason?: string, title?: string }[] = [{ key: "", text: "Select Download" }];
   const defaultLanguageOptions: { key: string; text: string; }[] = [{ key: "", text: "Choose one" }];
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
+  const defaultInfoMessage: string = "";
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
   const [editionOptions,] = useState(defaultEditionOptions.concat(importedEditionOptions));
   const [languageOptions, setLanguageOptions] = useState(defaultLanguageOptions);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
+  const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
 
   // Private functions
   function _loadLanguages(productEditionId: string): Promise<void> {
-    return ControlsService.getLanguages(sessionId, productEditionId)
-      .then(languages => setLanguageOptions(languages))
-      .catch(error => setErrorData(error));
+    if (editionOptions.find(option => option.key === productEditionId)) {
+      return ControlsService.getLanguages(sessionId, productEditionId)
+        .then(languagesData => {
+          setLanguageOptions(languagesData.languages);
+
+          if (languagesData.info) {
+            setInfoMessage(languagesData.info);
+          }
+        }).catch(error => setErrorData(error));
+    } else {
+      return ControlsService.GetSkuInformationByKey(sessionId, productEditionId)
+        .then(languagesData => {
+          setLanguageOptions(languagesData.languages);
+
+          if (languagesData.info) {
+            setInfoMessage(languagesData.info);
+          }
+        }).catch(error => setErrorData(error));
+    }
   }
 
   function _loadDownloadLinks(languageData: string): Promise<void> {
@@ -61,11 +79,12 @@ export const App: React.FunctionComponent = () => {
       description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
       options={editionOptions}
       defaultSelectedKey=""
+      placeholder="Enter product key"
       onChange={() => {
         setLanguageOptions(defaultLanguageOptions);
         setDownloadLinksData(defaultDownloadLinksData);
       }}
-      errorMessage="Select an edition from the drop down menu."
+      errorMessages={{ dropdown: "Select an edition from the drop down menu.", textfield: "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/" }}
       actionButton={{ text: "Download", onClick: _loadLanguages }}
     />
   </>;
@@ -85,7 +104,8 @@ export const App: React.FunctionComponent = () => {
       options={languageOptions}
       defaultSelectedKey=""
       onChange={() => setDownloadLinksData(defaultDownloadLinksData)}
-      errorMessage="Select a language from the drop down menu."
+      infoMessage={infoMessage}
+      errorMessages={{ dropdown: "Select a language from the drop down menu." }}
       actionButton={{ text: "Confirm", onClick: _loadDownloadLinks }}
     />
   </> : undefined;
