@@ -1,145 +1,124 @@
-import React, { useState } from 'react';
-import { Stack, Text, IDropdownOption, initializeIcons, PrimaryButton, Separator, ISeparatorStyles, ITextStyles, Dialog, DialogType, IDialogContentProps, DialogFooter, IImageProps, Image, IStackStyles, IStackTokens } from '@fluentui/react';
-import './App.css';
-import { useBoolean } from "@fluentui/react-hooks";
-import { Step } from './components/step/Step';
-import { ControlsService } from './services/controls/ControlsService';
+import React, { useState } from "react";
+import { Stack, Text, initializeIcons, PrimaryButton, Separator, ISeparatorStyles, ITextStyles, Dialog, DialogFooter, Image, IStackTokens, FontWeights } from '@fluentui/react';
+import "./App.css";
+import { Step } from "./components/step/Step";
+import { ControlsService } from "./services/controls/ControlsService";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
 
 // Styles
-const boldTextStyle: Partial<ITextStyles> = { root: { fontWeight: "bold" } };
-const stackStyles: Partial<IStackStyles> = {
-  root: {
-    maxWidth: "960px",
-    margin: "0 auto",
-    paddingTop: "50px",
-  }
-};
+const boldTextStyles: Partial<ITextStyles> = { root: { fontWeight: FontWeights.bold } };
 const separatorStyles: Partial<ISeparatorStyles> = { root: { width: "100%" } };
 
 // Tokens
-const tokens: Partial<IStackTokens> = { childrenGap: 15 };
-
-const editionOptions: IDropdownOption[] = [
-  { key: "", text: "Select Download" },
-  { key: "2370", text: "Windows 11, version 22H2" },
-  { key: "2069", text: "Windows 11, version 21H2" },
-  { key: "2377", text: "Windows 10, version 22H2" },
-]
-
-const errorDialogProps: IDialogContentProps = {
-  type: DialogType.normal,
-  title: "Error"
-}
-
-const clearProps: Partial<IImageProps> = {
-  src: `https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`
+const stackTokens: Partial<IStackTokens> = {
+  padding: 50,
+  childrenGap: 15
 };
 
-let errorMessage: string = "";
-let downloadsHeader: string = "";
-
-initializeIcons();
-
 export const App: React.FunctionComponent = () => {
-  const [errorDialogHidden, {
-    setTrue: hideErrorDialog,
-    setFalse: showErrorDialog
-  }] = useBoolean(true);
+  // Initializer function calls
+  initializeIcons();
 
-  // Data lists
-  const [languageOptions, setLanguageOptions] = useState<{ key: string, text: string }[]>([]);
-  const [downloadLinkButtons, setDownloadLinkButtons] = useState<{ text: string, onClick?: Function, url?: string }[]>([]);
+  // Data and their default values
+  const defaultEditionOptions = [
+    { key: "", text: "Select Download" },
+    { key: "2370", text: "Windows 11, version 22H2" },
+    { key: "2069", text: "Windows 11, version 21H2" },
+    { key: "2377", text: "Windows 10, version 22H2" },
+  ];
+  const defaultLanguageOptions: { key: string; text: string; }[] = [];
+  const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
+  const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
-  function loadLanguages(productEditionId: string): Promise<void> {
-    return ControlsService.getProductEditionLanguages(sessionId, productEditionId)
-      .then(productEditionLanguages => {
-        setLanguageOptions(productEditionLanguages);
-      }).catch(error => {
-        errorMessage = error;
-        showErrorDialog();
-      });
+  const [editionOptions,] = useState(defaultEditionOptions);
+  const [languageOptions, setLanguageOptions] = useState(defaultLanguageOptions);
+  const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
+  const [errorData, setErrorData] = useState(defaultErrorData);
+
+  // Private functions
+  function _loadLanguages(productEditionId: string): Promise<void> {
+    return ControlsService.getLanguages(sessionId, productEditionId)
+      .then(languages => setLanguageOptions(languages))
+      .catch(error => setErrorData(error));
   }
 
-  function loadDownloadLinks(languageData: string): Promise<void> {
+  function _loadDownloadLinks(languageData: string): Promise<void> {
     let key = JSON.parse(languageData);
 
     return ControlsService.getDownloadLinks(sessionId, key.id, key.language)
       .then(downloadLinks => {
-        downloadsHeader = downloadLinks.title;
-        setDownloadLinkButtons(downloadLinks.links.map(downloadLink => {
-          return { text: downloadLink.text, url: downloadLink.url }
-        }));
-      }).catch(error => {
-        errorMessage = error;
-        showErrorDialog();
-      });
+        setDownloadLinksData({
+          title: downloadLinks.title,
+          links: downloadLinks.links.map(downloadLink => {
+            return { text: downloadLink.text, url: downloadLink.url }
+          })
+        });
+      }).catch(error => setErrorData(error));
   }
 
-  function clearLanguagesAndDownloadLinks() {
-    setLanguageOptions([]);
-    setDownloadLinkButtons([]);
-  }
+  // Dynamic components
+  let editionsStep = <>
+    <Step
+      title="Download Windows Disk Image (ISO)"
+      description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
+      options={editionOptions}
+      defaultSelectedKey=""
+      onChange={() => {
+        setLanguageOptions(defaultLanguageOptions);
+        setDownloadLinksData(defaultDownloadLinksData);
+      }}
+      errorMessage="Select an edition from the drop down menu."
+      actionButton={{ text: "Download", onClick: _loadLanguages }}
+    />
+  </>;
 
-  function clearDownloadLinks() {
-    setDownloadLinkButtons([]);
-  }
-
-  let productLanguagesStep = languageOptions.length > 0 ? <>
+  let languagesStep = languageOptions.length > 0 ? <>
     <Separator styles={separatorStyles} />
     <Step
       title="Select the product language"
       description={
         <Text>
           <Text>You'll need to choose the same language when you install Windows. To see what language you're currently using, go to </Text>
-          <Text styles={boldTextStyle}>Time and language</Text>
+          <Text styles={boldTextStyles}>Time and language</Text>
           <Text> in PC settings or </Text>
-          <Text styles={boldTextStyle}>Region</Text>
+          <Text styles={boldTextStyles}>Region</Text>
           <Text> in Control Panel.</Text>
         </Text>
       }
       options={languageOptions}
       defaultSelectedKey=""
-      onChange={clearDownloadLinks}
+      onChange={() => setDownloadLinksData(defaultDownloadLinksData)}
       errorMessage="Select a language from the drop down menu."
-      actionButton={{ text: "Confirm", onClick: loadDownloadLinks }}
-    /> </> : undefined;
-
-  let downloadLinksStep = downloadLinkButtons.length > 0 ? <>
-    <Separator styles={separatorStyles} />
-    <Step
-      title={downloadsHeader}
-      linkButtons={downloadLinkButtons}
+      actionButton={{ text: "Confirm", onClick: _loadDownloadLinks }}
     />
   </> : undefined;
 
-  return (
-    <Stack styles={stackStyles} tokens={tokens}>
-      <Step
-        title="Download Windows Disk Image (ISO)"
-        description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
-        options={editionOptions}
-        defaultSelectedKey=""
-        onChange={clearLanguagesAndDownloadLinks}
-        errorMessage="Select an edition from the drop down menu."
-        actionButton={{ text: "Download", onClick: loadLanguages }}
-      />
-      {productLanguagesStep}
-      {downloadLinksStep}
-      <Dialog
-        hidden={errorDialogHidden}
-        onDismiss={hideErrorDialog}
-        dialogContentProps={errorDialogProps}
-      >
-        <Text>{errorMessage}</Text>
+  let downloadLinksStep = donwloadLinksData.links.length > 0 ? <>
+    <Separator styles={separatorStyles} />
+    <Step
+      title={donwloadLinksData.title}
+      linkButtons={donwloadLinksData.links}
+    />
+  </> : undefined;
 
-        <DialogFooter>
-          <PrimaryButton text="Close" onClick={hideErrorDialog} />
-        </DialogFooter>
-      </Dialog>
-      <Image {...clearProps} hidden />
+  let errorDialog = <>
+    <Dialog dialogContentProps={{ title: errorData.title }} hidden={!errorData.hasError}>
+      <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
+      <DialogFooter>
+        <PrimaryButton text="Close" onClick={() => setErrorData({ title: errorData.title, message: errorData.message, hasError: false })} />
+      </DialogFooter>
+    </Dialog>
+  </>;
+
+  return (
+    <Stack tokens={stackTokens}>
+      {editionsStep}
+      {languagesStep}
+      {downloadLinksStep}
+      {errorDialog}
+      <Image src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} hidden />
     </Stack>
   );
 };
