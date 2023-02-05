@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/ms-iso-download-tool/static/css/main.abd64e84.css",
-    "main.js": "/ms-iso-download-tool/static/js/main.cc4c1c13.js",
+    "main.js": "/ms-iso-download-tool/static/js/main.2cfc941d.js",
     "static/js/787.986cec85.chunk.js": "/ms-iso-download-tool/static/js/787.986cec85.chunk.js",
     "index.html": "/ms-iso-download-tool/index.html",
     "main.abd64e84.css.map": "/ms-iso-download-tool/static/css/main.abd64e84.css.map",
-    "main.cc4c1c13.js.map": "/ms-iso-download-tool/static/js/main.cc4c1c13.js.map",
+    "main.2cfc941d.js.map": "/ms-iso-download-tool/static/js/main.2cfc941d.js.map",
     "787.986cec85.chunk.js.map": "/ms-iso-download-tool/static/js/787.986cec85.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.abd64e84.css",
-    "static/js/main.cc4c1c13.js"
+    "static/js/main.2cfc941d.js"
   ]
 }
