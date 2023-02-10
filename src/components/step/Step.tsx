@@ -1,11 +1,15 @@
-import { Dropdown, FontSizes, FontWeights, IDropdown, IStackTokens, ITextField, ITextFieldStyles, ITextStyles, MessageBar, PrimaryButton, Spinner, Stack, Text, TextField } from "@fluentui/react";
+import { Dropdown, IDropdown, IStackTokens, ITextField, ITextFieldStyles, MessageBar, Stack, TextField } from "@fluentui/react";
+import { Button, makeStyles, Spinner, Text, Title2 } from "@fluentui/react-components";
 import React, { useState } from "react";
 import { StepProps } from "./StepProps";
 
+const useStyles = makeStyles({
+  verticallyAligned: { marginTop: "auto", marginBottom: "auto" },
+});
+
 export const Step: React.FunctionComponent<StepProps> = (props) => {
   // Styles
-  const xxLargeTextStyles: Partial<ITextStyles> = { root: { fontSize: FontSizes.xxLarge, fontWeight: FontWeights.semibold } };
-  const verticallyAlignedTextStyles: Partial<ITextStyles> = { root: { margin: "auto 0" } }
+  const classes = useStyles();
   const textFieldStyles: Partial<ITextFieldStyles> = { root: { width: "20em" } };
 
   // Tokens
@@ -40,7 +44,7 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
 
   // Dynamic components
   let spinner = loading ? <>
-    <Spinner />
+    <Spinner size="tiny" />
   </> : undefined;
 
   let description = typeof props.description === "string" ? <>
@@ -65,7 +69,7 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
   </> : undefined;
 
   let textField = props.errorMessages?.textfield ? <>
-    <Text styles={verticallyAlignedTextStyles}>or</Text>
+    <Text className={classes.verticallyAligned}>or</Text>
     <TextField
       placeholder={props.placeholder}
       styles={textFieldStyles}
@@ -83,10 +87,10 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
   </>;
 
   let buttons = props.actionButton ? <>
-    <PrimaryButton text={props.actionButton.text} onClick={_onClick} disabled={loading} />
+    <Button appearance="primary" onClick={_onClick} disabled={loading}>{props.actionButton.text}</Button>
   </> : props.linkButtons ? props.linkButtons!.map((button) =>
     <React.Fragment key={button.text}>
-      <PrimaryButton text={button.text} onClick={() => window.open(button.url)} />
+      <Button appearance="primary" onClick={() => window.open(button.url)}>{button.text}</Button>
     </React.Fragment>
   ) : undefined;
 
@@ -99,7 +103,7 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
 
   return (
     <Stack tokens={tokens} horizontalAlign="start">
-      <Text styles={xxLargeTextStyles}>{props.title}</Text>
+      <Title2>{props.title}</Title2>
       {description}
       {messageBar}
       {dataInputStack}

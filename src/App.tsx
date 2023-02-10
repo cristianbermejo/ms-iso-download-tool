@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Stack, Text, initializeIcons, PrimaryButton, Separator, ISeparatorStyles, ITextStyles, Dialog, DialogFooter, Image, IStackTokens, FontWeights } from '@fluentui/react';
+import { Stack, initializeIcons, PrimaryButton, Separator, ISeparatorStyles, Dialog, DialogFooter, Image, IStackTokens } from '@fluentui/react';
+import { Text } from "@fluentui/react-components";
 import "./App.css";
 import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
@@ -9,7 +10,6 @@ import importedEditionOptions from "./res/editionOptions.json";
 const sessionId: string = crypto.randomUUID();
 
 // Styles
-const boldTextStyles: Partial<ITextStyles> = { root: { fontWeight: FontWeights.bold } };
 const separatorStyles: Partial<ISeparatorStyles> = { root: { width: "100%" } };
 
 // Tokens
@@ -95,9 +95,9 @@ export const App: React.FunctionComponent = () => {
       description={
         <Text>
           <Text>You'll need to choose the same language when you install Windows. To see what language you're currently using, go to </Text>
-          <Text styles={boldTextStyles}>Time and language</Text>
+          <Text weight="bold">Time and language</Text>
           <Text> in PC settings or </Text>
-          <Text styles={boldTextStyles}>Region</Text>
+          <Text weight="bold">Region</Text>
           <Text> in Control Panel.</Text>
         </Text>
       }
