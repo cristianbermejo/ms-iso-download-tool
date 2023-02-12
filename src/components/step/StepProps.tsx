@@ -1,11 +1,10 @@
-import { ITextComponent, IDropdownOption } from "@fluentui/react";
 import { ReactElement } from "react";
 
 export type StepProps = {
     title: string;
-    description?: string | ReactElement<ITextComponent>;
-    options?: IDropdownOption<string>[];
-    defaultSelectedKey?: string;
+    description?: string | ReactElement<Text>;
+    options?: { value: string, text: string, title?: string, disabled?: boolean }[];
+    defaultSelectedOption?: { value: string, text: string, title?: string, disabled?: boolean };
     placeholder?: string;
     onChange?: Function;
     infoMessage?: string;

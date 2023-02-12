@@ -1,45 +1,64 @@
-import { Dropdown, IDropdown, IStackTokens, ITextField, ITextFieldStyles, MessageBar, Stack, TextField } from "@fluentui/react";
-import { Button, makeStyles, Spinner, Text, Title2 } from "@fluentui/react-components";
+import { IStackTokens, MessageBar, Stack } from "@fluentui/react";
+import { Button, Dropdown, DropdownProps, Input, InputProps, Label, makeStyles, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React, { useState } from "react";
 import { StepProps } from "./StepProps";
 
 const useStyles = makeStyles({
+  errorText: { color: "#F00" },
+  errorFormField: {
+    borderTopColor: "#F00",
+    borderRightColor: "#F00",
+    borderBottomColor: "#F00",
+    borderLeftColor: "#F00",
+    ":hover": {
+      borderTopColor: "#F00",
+      borderRightColor: "#F00",
+      borderBottomColor: "#F00",
+      borderLeftColor: "#F00",
+    },
+  },
+  twentyEmWide: { width: "20em" },
   verticallyAligned: { marginTop: "auto", marginBottom: "auto" },
 });
 
 export const Step: React.FunctionComponent<StepProps> = (props) => {
   // Styles
   const classes = useStyles();
-  const textFieldStyles: Partial<ITextFieldStyles> = { root: { width: "20em" } };
 
   // Tokens
   const tokens: Partial<IStackTokens> = { childrenGap: 15 };
 
-  // Stateful variables
-  let [loading, isLoading] = useState(false);
-  let [validationError, showValidationError] = useState(false);
+  // Stateful values
+  const [loading, isLoading] = useState(false);
+  const [validationError, showValidationError] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState([props.defaultSelectedOption?.value || ""]);
+  const [value, setValue] = useState(props.defaultSelectedOption?.value || "");
 
-  // Component references
-  let dropdownRef = React.createRef<IDropdown>();
-  let textFieldRef = React.createRef<ITextField>();
+  // Component IDs
+  const dropdownId = useId("step-dropdown");
+  const inputId = useId("step-input");
 
   // Handler functions
   function _onClick(): void {
-    if (textFieldRef.current && textFieldRef.current.value!.length > 0) {
+    if (value.length > 0) {
       showValidationError(false);
       isLoading(true);
 
-      props.actionButton!.onClick!(textFieldRef.current?.value)
-        .finally(() => isLoading(false));
-    } else if (dropdownRef.current && dropdownRef.current.selectedOptions[0].key !== props.defaultSelectedKey) {
-      showValidationError(false);
-      isLoading(true);
-
-      props.actionButton!.onClick!(dropdownRef.current?.selectedOptions[0].key)
-        .finally(() => isLoading(false));
+      props.actionButton!.onClick!(value).finally(() => isLoading(false));
     } else {
       showValidationError(true);
     }
+  }
+
+  const onChange: InputProps["onChange"] = (event, data) => {
+    setValue(data.value);
+    props.onChange!();
+  }
+
+  const onOptionSelect: DropdownProps["onOptionSelect"] = (event, data) => {
+    setSelectedOptions(data.selectedOptions);
+    setValue(data.optionValue!);
+    props.onChange!();
   }
 
   // Dynamic components
@@ -57,26 +76,41 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
 
   let dropdownStack = (props.options && props.options!.length > 0) ? <>
     <Stack horizontal tokens={tokens}>
-      <Dropdown
-        options={props.options!}
-        defaultSelectedKey={props.defaultSelectedKey}
-        dropdownWidth="auto"
-        onChange={() => props.onChange!()}
-        errorMessage={validationError ? props.errorMessages?.dropdown : undefined}
-        componentRef={dropdownRef}
-      />
+      <Stack>
+        <Label htmlFor={dropdownId} className={classes.errorText}>
+          {validationError ? props.errorMessages?.dropdown : undefined}
+        </Label>
+        <Dropdown
+          className={validationError ? classes.errorFormField : undefined}
+          id={dropdownId}
+          selectedOptions={selectedOptions}
+          defaultSelectedOptions={[props.defaultSelectedOption!.value]}
+          defaultValue={props.defaultSelectedOption!.text}
+          onOptionSelect={onOptionSelect}
+        >
+          {props.options.map(option => {
+            return <React.Fragment key={option.value}>
+              <Option value={option.value} title={option.title} disabled={option.disabled}>{option.text}</Option>
+            </React.Fragment>
+          })}
+        </Dropdown>
+      </Stack>
     </Stack>
   </> : undefined;
 
   let textField = props.errorMessages?.textfield ? <>
     <Text className={classes.verticallyAligned}>or</Text>
-    <TextField
-      placeholder={props.placeholder}
-      styles={textFieldStyles}
-      onChange={() => props.onChange!()}
-      errorMessage={validationError ? props.errorMessages.textfield : undefined}
-      componentRef={textFieldRef}
-    />
+    <Stack>
+      <Label htmlFor={inputId} className={classes.errorText}>
+        {validationError ? props.errorMessages.textfield : undefined}
+      </Label>
+      <Input
+        className={validationError ? mergeClasses(classes.errorFormField, classes.twentyEmWide) : classes.twentyEmWide}
+        id={inputId}
+        placeholder={props.placeholder}
+        onChange={onChange}
+      />
+    </Stack>
   </> : undefined;
 
   let dataInputStack = <>

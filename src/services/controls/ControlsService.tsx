@@ -17,11 +17,11 @@ function _findLanguages(result: string) {
 
   let options = div.querySelectorAll("option");
   let productInfo = div.querySelector("#product-info-content i");
-  let languagesData: { info?: string, languages: { key: string, text: string }[] } = { info: productInfo?.textContent || undefined, languages: [] };
+  let languagesData: { info?: string, languages: { value: string, text: string }[] } = { info: productInfo?.textContent || undefined, languages: [] };
 
   for (let i = 0; i < options.length; i++) {
     languagesData.languages.push({
-      key: options[i].value,
+      value: options[i].value,
       text: options[i].text
     });
   }
@@ -30,7 +30,8 @@ function _findLanguages(result: string) {
 }
 
 export const ControlsService = {
-  getLanguages(sessionId: string, productEditionId: string): Promise<{ info?: string, languages: { key: string, text: string }[] }> {
+  getLanguages(sessionId: string, productEditionId: string): Promise<{ info?: string, languages: { value
+    : string, text: string }[] }> {
     return WebClient.post([
       { name: "pageId", value: "a8f8f489-4c7f-463a-9ca6-5cff94d8d041" },
       { name: "host", value: "www.microsoft.com" },
@@ -93,7 +94,7 @@ export const ControlsService = {
       );
     }
   },
-  GetSkuInformationByKey(sessionId: string, key: string): Promise<{ info?: string, languages: { key: string, text: string }[]}> {
+  GetSkuInformationByKey(sessionId: string, key: string): Promise<{ info?: string, languages: { value: string, text: string }[]}> {
     return WebClient.post([
       { name: "pageId", value: "cd06bda8-ff9c-4a6e-912a-b92a21f42526" },
       { name: "host", value: "www.microsoft.com" },

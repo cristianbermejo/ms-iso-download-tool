@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Stack, initializeIcons, PrimaryButton, Separator, ISeparatorStyles, Dialog, DialogFooter, Image, IStackTokens } from '@fluentui/react';
+import { Stack, PrimaryButton, Separator, ISeparatorStyles, Dialog, DialogFooter, Image, IStackTokens } from '@fluentui/react';
 import { Text } from "@fluentui/react-components";
 import "./App.css";
 import { Step } from "./components/step/Step";
@@ -19,25 +19,22 @@ const stackTokens: Partial<IStackTokens> = {
 };
 
 export const App: React.FunctionComponent = () => {
-  // Initializer function calls
-  initializeIcons();
-
   // Data and their default values
-  const defaultEditionOptions: { key: string, text: string, disabled?: boolean, _disabledReason?: string, title?: string }[] = [{ key: "", text: "Select Download" }];
-  const defaultLanguageOptions: { key: string; text: string; }[] = [{ key: "", text: "Choose one" }];
+  const defaultEditionOption: { value: string, text: string, disabled?: boolean, title?: string } = { value: "", text: "Select Download" };
+  const defaultLanguageOption: { value: string; text: string; } = { value: "", text: "Choose one" };
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
   const defaultInfoMessage: string = "";
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
-  const [editionOptions,] = useState(defaultEditionOptions.concat(importedEditionOptions));
-  const [languageOptions, setLanguageOptions] = useState(defaultLanguageOptions);
+  const [editionOptions,] = useState([defaultEditionOption].concat(importedEditionOptions));
+  const [languageOptions, setLanguageOptions] = useState([defaultLanguageOption]);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
   const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
 
   // Private functions
   function _loadLanguages(productEditionId: string): Promise<void> {
-    if (editionOptions.find(option => option.key === productEditionId)) {
+    if (editionOptions.find(option => option.value === productEditionId)) {
       return ControlsService.getLanguages(sessionId, productEditionId)
         .then(languagesData => {
           setLanguageOptions(languagesData.languages);
@@ -78,17 +75,17 @@ export const App: React.FunctionComponent = () => {
       title="Download Windows Disk Image (ISO)"
       description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
       options={editionOptions}
-      defaultSelectedKey=""
+      defaultSelectedOption={defaultEditionOption}
       placeholder="Enter product key"
       onChange={() => {
-        setLanguageOptions(defaultLanguageOptions);
+        setLanguageOptions([defaultLanguageOption]);
         setDownloadLinksData(defaultDownloadLinksData);
       }}
       errorMessages={{ dropdown: "Select an edition from the drop down menu.", textfield: "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/" }}
       actionButton={{ text: "Download", onClick: _loadLanguages }}
     />
   </>;
-  let languagesStep = languageOptions.length > defaultLanguageOptions.length ? <>
+  let languagesStep = languageOptions.length > 1 ? <>
     <Separator styles={separatorStyles} />
     <Step
       title="Select the product language"
@@ -102,7 +99,7 @@ export const App: React.FunctionComponent = () => {
         </Text>
       }
       options={languageOptions}
-      defaultSelectedKey=""
+      defaultSelectedOption={defaultLanguageOption}
       onChange={() => setDownloadLinksData(defaultDownloadLinksData)}
       infoMessage={infoMessage}
       errorMessages={{ dropdown: "Select a language from the drop down menu." }}
