@@ -1,4 +1,4 @@
-import { IStackTokens, MessageBar, Stack } from "@fluentui/react";
+import { MessageBar } from "@fluentui/react";
 import { Button, Dropdown, DropdownProps, Input, InputProps, Label, makeStyles, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React, { useState } from "react";
 import { StepProps } from "./StepProps";
@@ -17,6 +17,17 @@ const useStyles = makeStyles({
       borderLeftColor: "#F00",
     },
   },
+  flexColumn: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  leftGap: { "> :not(:first-child)": { marginLeft: "15px" }},
+  topGap: { "> :not(:first-child)": { marginTop: "15px" }},
   twentyEmWide: { width: "20em" },
   verticallyAligned: { marginTop: "auto", marginBottom: "auto" },
 });
@@ -24,9 +35,6 @@ const useStyles = makeStyles({
 export const Step: React.FunctionComponent<StepProps> = (props) => {
   // Styles
   const classes = useStyles();
-
-  // Tokens
-  const tokens: Partial<IStackTokens> = { childrenGap: 15 };
 
   // Stateful values
   const [loading, isLoading] = useState(false);
@@ -75,8 +83,8 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
   </> : undefined;
 
   let dropdownStack = (props.options && props.options!.length > 0) ? <>
-    <Stack horizontal tokens={tokens}>
-      <Stack>
+    <div className={mergeClasses(classes.flexRow, classes.leftGap)}>
+      <div className={classes.flexColumn}>
         <Label htmlFor={dropdownId} className={classes.errorText}>
           {validationError ? props.errorMessages?.dropdown : undefined}
         </Label>
@@ -94,13 +102,13 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
             </React.Fragment>
           })}
         </Dropdown>
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   </> : undefined;
 
   let textField = props.errorMessages?.textfield ? <>
     <Text className={classes.verticallyAligned}>or</Text>
-    <Stack>
+    <div className={classes.flexColumn}>
       <Label htmlFor={inputId} className={classes.errorText}>
         {validationError ? props.errorMessages.textfield : undefined}
       </Label>
@@ -110,14 +118,14 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
         placeholder={props.placeholder}
         onChange={onChange}
       />
-    </Stack>
+    </div>
   </> : undefined;
 
   let dataInputStack = <>
-    <Stack horizontal tokens={tokens}>
+    <div className={mergeClasses(classes.flexRow, classes.leftGap)}>
       {dropdownStack}
       {textField}
-    </Stack>
+    </div>
   </>;
 
   let buttons = props.actionButton ? <>
@@ -129,19 +137,22 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
   ) : undefined;
 
   let buttonsStack = <>
-    <Stack horizontal={props.actionButton !== undefined} tokens={tokens}>
+    <div className={props.actionButton ?
+        mergeClasses(classes.flexRow, classes.leftGap) :
+        mergeClasses(classes.flexColumn, classes.topGap)
+      }>
       {buttons}
       {spinner}
-    </Stack>
+    </div>
   </>;
 
   return (
-    <Stack tokens={tokens} horizontalAlign="start">
+    <div className={mergeClasses(classes.flexColumn, classes.topGap)}>
       <Title2>{props.title}</Title2>
       {description}
       {messageBar}
       {dataInputStack}
       {buttonsStack}
-    </Stack>
+    </div>
   );
 }

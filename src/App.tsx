@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Stack, PrimaryButton, Separator, ISeparatorStyles, Dialog, DialogFooter, Image, IStackTokens } from '@fluentui/react';
-import { Text } from "@fluentui/react-components";
+import { PrimaryButton, Separator, ISeparatorStyles, Dialog, DialogFooter, Image } from '@fluentui/react';
+import { makeStyles, Text } from "@fluentui/react-components";
 import "./App.css";
 import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
@@ -11,14 +11,21 @@ const sessionId: string = crypto.randomUUID();
 
 // Styles
 const separatorStyles: Partial<ISeparatorStyles> = { root: { width: "100%" } };
-
-// Tokens
-const stackTokens: Partial<IStackTokens> = {
-  padding: 50,
-  childrenGap: 15
-};
+const useStyles = makeStyles({
+  columnBlock: {
+    paddingTop: "50px",
+    paddingRight: "50px",
+    paddingBottom: "50px",
+    paddingLeft: "50px",
+    display: "flex",
+    flexDirection: "column"
+  }
+});
 
 export const App: React.FunctionComponent = () => {
+  // Styles
+  const classes = useStyles();
+
   // Data and their default values
   const defaultEditionOption: { value: string, text: string, disabled?: boolean, title?: string } = { value: "", text: "Select Download" };
   const defaultLanguageOption: { value: string; text: string; } = { value: "", text: "Choose one" };
@@ -125,12 +132,12 @@ export const App: React.FunctionComponent = () => {
   </>;
 
   return (
-    <Stack tokens={stackTokens}>
+    <div className={classes.columnBlock}>
       {editionsStep}
       {languagesStep}
       {downloadLinksStep}
       {errorDialog}
       <Image src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} hidden />
-    </Stack>
+    </div>
   );
 };
