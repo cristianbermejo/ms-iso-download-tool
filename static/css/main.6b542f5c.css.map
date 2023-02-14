@@ -1,0 +1,1 @@
+{"version":3,"file":"static/css/main.6b542f5c.css","mappings":"AAAA,gBAGE,cAAe,CAFf,QAAS,CACT,SAEF","sources":["App.css"],"sourcesContent":["body, html, #root {\r\n  margin: 0;\r\n  padding: 0;\r\n  height: \"100vh\";\r\n}"],"names":[],"sourceRoot":""}
