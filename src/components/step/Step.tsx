@@ -1,36 +1,8 @@
 import { MessageBar } from "@fluentui/react";
-import { Button, Dropdown, DropdownProps, Input, InputProps, Label, makeStyles, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
+import { Button, Dropdown, DropdownProps, Input, InputProps, Label, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React, { useState } from "react";
+import { useStyles } from "../../commons/Styles";
 import { StepProps } from "./StepProps";
-
-const useStyles = makeStyles({
-  errorText: { color: "#F00" },
-  errorFormField: {
-    borderTopColor: "#F00",
-    borderRightColor: "#F00",
-    borderBottomColor: "#F00",
-    borderLeftColor: "#F00",
-    ":hover": {
-      borderTopColor: "#F00",
-      borderRightColor: "#F00",
-      borderBottomColor: "#F00",
-      borderLeftColor: "#F00",
-    },
-  },
-  flexColumn: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "start",
-  },
-  flexRow: {
-    display: "flex",
-    flexDirection: "row",
-  },
-  leftGap: { "> :not(:first-child)": { marginLeft: "15px" }},
-  topGap: { "> :not(:first-child)": { marginTop: "15px" }},
-  twentyEmWide: { width: "20em" },
-  verticallyAligned: { marginTop: "auto", marginBottom: "auto" },
-});
 
 export const Step: React.FunctionComponent<StepProps> = (props) => {
   // Styles

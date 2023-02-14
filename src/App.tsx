@@ -1,26 +1,13 @@
 import React, { useState } from "react";
-import { PrimaryButton, Separator, ISeparatorStyles, Dialog, DialogFooter, Image } from '@fluentui/react';
-import { makeStyles, Text } from "@fluentui/react-components";
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Divider, Image, mergeClasses, Text } from "@fluentui/react-components";
 import "./App.css";
 import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
 import importedEditionOptions from "./res/editionOptions.json";
+import { useStyles } from "./commons/Styles";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
-
-// Styles
-const separatorStyles: Partial<ISeparatorStyles> = { root: { width: "100%" } };
-const useStyles = makeStyles({
-  columnBlock: {
-    paddingTop: "50px",
-    paddingRight: "50px",
-    paddingBottom: "50px",
-    paddingLeft: "50px",
-    display: "flex",
-    flexDirection: "column"
-  }
-});
 
 export const App: React.FunctionComponent = () => {
   // Styles
@@ -93,7 +80,7 @@ export const App: React.FunctionComponent = () => {
     />
   </>;
   let languagesStep = languageOptions.length > 1 ? <>
-    <Separator styles={separatorStyles} />
+    <Divider />
     <Step
       title="Select the product language"
       description={
@@ -115,7 +102,7 @@ export const App: React.FunctionComponent = () => {
   </> : undefined;
 
   let downloadLinksStep = donwloadLinksData.links.length > defaultDownloadLinksData.links.length ? <>
-    <Separator styles={separatorStyles} />
+    <Divider />
     <Step
       title={donwloadLinksData.title}
       linkButtons={donwloadLinksData.links}
@@ -123,21 +110,38 @@ export const App: React.FunctionComponent = () => {
   </> : undefined;
 
   let errorDialog = <>
-    <Dialog dialogContentProps={{ title: errorData.title }} hidden={!errorData.hasError}>
-      <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
-      <DialogFooter>
-        <PrimaryButton text="Close" onClick={() => setErrorData({ title: errorData.title, message: errorData.message, hasError: false })} />
-      </DialogFooter>
+    <Dialog open={errorData.hasError} modalType="modal">
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{errorData.title}</DialogTitle>
+          <DialogContent>
+            <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
+          </DialogContent>
+          <DialogActions>
+            <DialogTrigger disableButtonEnhancement>
+              <Button appearance="primary"
+                onClick={() => setErrorData({
+                  title: errorData.title,
+                  message: errorData.message,
+                  hasError: false
+                  }
+                )}>
+                  Close
+                </Button>
+            </DialogTrigger>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
     </Dialog>
   </>;
 
   return (
-    <div className={classes.columnBlock}>
+    <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
       {editionsStep}
       {languagesStep}
       {downloadLinksStep}
       {errorDialog}
-      <Image src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} hidden />
+      <Image className={classes.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
     </div>
   );
 };
