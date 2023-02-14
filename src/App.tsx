@@ -1,43 +1,34 @@
 import React, { useState } from "react";
-import { Stack, Text, initializeIcons, PrimaryButton, Separator, ISeparatorStyles, ITextStyles, Dialog, DialogFooter, Image, IStackTokens, FontWeights } from '@fluentui/react';
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Divider, Image, mergeClasses, Text } from "@fluentui/react-components";
 import "./App.css";
 import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
 import importedEditionOptions from "./res/editionOptions.json";
+import { useStyles } from "./commons/Styles";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
 
-// Styles
-const boldTextStyles: Partial<ITextStyles> = { root: { fontWeight: FontWeights.bold } };
-const separatorStyles: Partial<ISeparatorStyles> = { root: { width: "100%" } };
-
-// Tokens
-const stackTokens: Partial<IStackTokens> = {
-  padding: 50,
-  childrenGap: 15
-};
-
 export const App: React.FunctionComponent = () => {
-  // Initializer function calls
-  initializeIcons();
+  // Styles
+  const classes = useStyles();
 
   // Data and their default values
-  const defaultEditionOptions: { key: string, text: string, disabled?: boolean, _disabledReason?: string, title?: string }[] = [{ key: "", text: "Select Download" }];
-  const defaultLanguageOptions: { key: string; text: string; }[] = [{ key: "", text: "Choose one" }];
+  const defaultEditionOption: { value: string, text: string, disabled?: boolean, title?: string } = { value: "", text: "Select Download" };
+  const defaultLanguageOption: { value: string; text: string; } = { value: "", text: "Choose one" };
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
   const defaultInfoMessage: string = "";
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
-  const [editionOptions,] = useState(defaultEditionOptions.concat(importedEditionOptions));
-  const [languageOptions, setLanguageOptions] = useState(defaultLanguageOptions);
+  const [editionOptions,] = useState([defaultEditionOption].concat(importedEditionOptions));
+  const [languageOptions, setLanguageOptions] = useState([defaultLanguageOption]);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
   const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
 
   // Private functions
   function _loadLanguages(productEditionId: string): Promise<void> {
-    if (editionOptions.find(option => option.key === productEditionId)) {
+    if (editionOptions.find(option => option.value === productEditionId)) {
       return ControlsService.getLanguages(sessionId, productEditionId)
         .then(languagesData => {
           setLanguageOptions(languagesData.languages);
@@ -78,31 +69,31 @@ export const App: React.FunctionComponent = () => {
       title="Download Windows Disk Image (ISO)"
       description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
       options={editionOptions}
-      defaultSelectedKey=""
+      defaultSelectedOption={defaultEditionOption}
       placeholder="Enter product key"
       onChange={() => {
-        setLanguageOptions(defaultLanguageOptions);
+        setLanguageOptions([defaultLanguageOption]);
         setDownloadLinksData(defaultDownloadLinksData);
       }}
       errorMessages={{ dropdown: "Select an edition from the drop down menu.", textfield: "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/" }}
       actionButton={{ text: "Download", onClick: _loadLanguages }}
     />
   </>;
-  let languagesStep = languageOptions.length > defaultLanguageOptions.length ? <>
-    <Separator styles={separatorStyles} />
+  let languagesStep = languageOptions.length > 1 ? <>
+    <Divider />
     <Step
       title="Select the product language"
       description={
         <Text>
           <Text>You'll need to choose the same language when you install Windows. To see what language you're currently using, go to </Text>
-          <Text styles={boldTextStyles}>Time and language</Text>
+          <Text weight="bold">Time and language</Text>
           <Text> in PC settings or </Text>
-          <Text styles={boldTextStyles}>Region</Text>
+          <Text weight="bold">Region</Text>
           <Text> in Control Panel.</Text>
         </Text>
       }
       options={languageOptions}
-      defaultSelectedKey=""
+      defaultSelectedOption={defaultLanguageOption}
       onChange={() => setDownloadLinksData(defaultDownloadLinksData)}
       infoMessage={infoMessage}
       errorMessages={{ dropdown: "Select a language from the drop down menu." }}
@@ -111,7 +102,7 @@ export const App: React.FunctionComponent = () => {
   </> : undefined;
 
   let downloadLinksStep = donwloadLinksData.links.length > defaultDownloadLinksData.links.length ? <>
-    <Separator styles={separatorStyles} />
+    <Divider />
     <Step
       title={donwloadLinksData.title}
       linkButtons={donwloadLinksData.links}
@@ -119,21 +110,38 @@ export const App: React.FunctionComponent = () => {
   </> : undefined;
 
   let errorDialog = <>
-    <Dialog dialogContentProps={{ title: errorData.title }} hidden={!errorData.hasError}>
-      <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
-      <DialogFooter>
-        <PrimaryButton text="Close" onClick={() => setErrorData({ title: errorData.title, message: errorData.message, hasError: false })} />
-      </DialogFooter>
+    <Dialog open={errorData.hasError} modalType="modal">
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{errorData.title}</DialogTitle>
+          <DialogContent>
+            <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
+          </DialogContent>
+          <DialogActions>
+            <DialogTrigger disableButtonEnhancement>
+              <Button appearance="primary"
+                onClick={() => setErrorData({
+                  title: errorData.title,
+                  message: errorData.message,
+                  hasError: false
+                  }
+                )}>
+                  Close
+                </Button>
+            </DialogTrigger>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
     </Dialog>
   </>;
 
   return (
-    <Stack tokens={stackTokens}>
+    <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
       {editionsStep}
       {languagesStep}
       {downloadLinksStep}
       {errorDialog}
-      <Image src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} hidden />
-    </Stack>
+      <Image className={classes.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
+    </div>
   );
 };
