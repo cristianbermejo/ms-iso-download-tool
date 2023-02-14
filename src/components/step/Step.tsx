@@ -1,4 +1,3 @@
-import { MessageBar } from "@fluentui/react";
 import { Button, Dropdown, DropdownProps, Input, InputProps, Label, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React, { useState } from "react";
 import { useStyles } from "../../commons/Styles";
@@ -50,9 +49,7 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
     <Text>{props.description}</Text>
   </> : props.description;
 
-  let messageBar = props.infoMessage ? <>
-    <MessageBar>{props.infoMessage}</MessageBar>
-  </> : undefined;
+  let infoMessage = props.infoMessage ? <> <Text weight="bold">{props.infoMessage}</Text> </> : undefined;
 
   let dropdownStack = (props.options && props.options!.length > 0) ? <>
     <div className={mergeClasses(classes.flexRow, classes.leftGap)}>
@@ -122,7 +119,7 @@ export const Step: React.FunctionComponent<StepProps> = (props) => {
     <div className={mergeClasses(classes.flexColumn, classes.topGap)}>
       <Title2>{props.title}</Title2>
       {description}
-      {messageBar}
+      {infoMessage}
       {dataInputStack}
       {buttonsStack}
     </div>
