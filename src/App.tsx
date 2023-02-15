@@ -3,8 +3,8 @@ import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface
 import "./App.css";
 import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
-import importedEditionOptions from "./res/editionOptions.json";
 import { useStyles } from "./commons/Styles";
+import Edition from "./edition";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
@@ -14,41 +14,17 @@ export const App: React.FunctionComponent = () => {
   const classes = useStyles();
 
   // Data and their default values
-  const defaultEditionOption: { value: string, text: string, disabled?: boolean, title?: string } = { value: "", text: "Select Download" };
   const defaultLanguageOption: { value: string; text: string; } = { value: "", text: "Choose one" };
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
   const defaultInfoMessage: string = "";
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
-  const [editionOptions,] = useState([defaultEditionOption].concat(importedEditionOptions));
   const [languageOptions, setLanguageOptions] = useState([defaultLanguageOption]);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
   const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
 
   // Private functions
-  function _loadLanguages(productEditionId: string): Promise<void> {
-    if (editionOptions.find(option => option.value === productEditionId)) {
-      return ControlsService.getLanguages(sessionId, productEditionId)
-        .then(languagesData => {
-          setLanguageOptions(languagesData.languages);
-
-          if (languagesData.info) {
-            setInfoMessage(languagesData.info);
-          }
-        }).catch(error => setErrorData(error));
-    } else {
-      return ControlsService.GetSkuInformationByKey(sessionId, productEditionId)
-        .then(languagesData => {
-          setLanguageOptions(languagesData.languages);
-
-          if (languagesData.info) {
-            setInfoMessage(languagesData.info);
-          }
-        }).catch(error => setErrorData(error));
-    }
-  }
-
   function _loadDownloadLinks(languageData: string): Promise<void> {
     let key = JSON.parse(languageData);
 
@@ -63,22 +39,33 @@ export const App: React.FunctionComponent = () => {
       }).catch(error => setErrorData(error));
   }
 
+  const onEditionValueChange = () => {
+    setLanguageOptions([defaultLanguageOption]);
+    setDownloadLinksData(defaultDownloadLinksData);
+  };
+  const loadLanguages = (value: string, isProductKey: boolean): Promise<void> => {
+    if (isProductKey) {
+      return ControlsService.GetSkuInformationByKey(sessionId, value)
+        .then(languagesData => {
+          setLanguageOptions(languagesData.languages);
+
+          if (languagesData.info) {
+            setInfoMessage(languagesData.info);
+          }
+        }).catch(error => setErrorData(error));
+    } else {
+      return ControlsService.getLanguages(sessionId, value)
+        .then(languagesData => {
+          setLanguageOptions(languagesData.languages);
+
+          if (languagesData.info) {
+            setInfoMessage(languagesData.info);
+          }
+        }).catch(error => setErrorData(error));
+    }
+  }
+
   // Dynamic components
-  let editionsStep = <>
-    <Step
-      title="Download Windows Disk Image (ISO)"
-      description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
-      options={editionOptions}
-      defaultSelectedOption={defaultEditionOption}
-      placeholder="Enter product key"
-      onChange={() => {
-        setLanguageOptions([defaultLanguageOption]);
-        setDownloadLinksData(defaultDownloadLinksData);
-      }}
-      errorMessages={{ dropdown: "Select an edition from the drop down menu.", textfield: "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/" }}
-      actionButton={{ text: "Download", onClick: _loadLanguages }}
-    />
-  </>;
   let languagesStep = languageOptions.length > 1 ? <>
     <Divider />
     <Step
@@ -124,10 +111,10 @@ export const App: React.FunctionComponent = () => {
                   title: errorData.title,
                   message: errorData.message,
                   hasError: false
-                  }
+                }
                 )}>
-                  Close
-                </Button>
+                Close
+              </Button>
             </DialogTrigger>
           </DialogActions>
         </DialogBody>
@@ -137,7 +124,7 @@ export const App: React.FunctionComponent = () => {
 
   return (
     <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
-      {editionsStep}
+      <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
       {languagesStep}
       {downloadLinksStep}
       {errorDialog}
