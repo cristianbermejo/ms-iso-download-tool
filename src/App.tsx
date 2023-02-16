@@ -44,25 +44,20 @@ export const App: React.FunctionComponent = () => {
     setDownloadLinksData(defaultDownloadLinksData);
   };
   const loadLanguages = (value: string, isProductKey: boolean): Promise<void> => {
+    let promise;
     if (isProductKey) {
-      return ControlsService.GetSkuInformationByKey(sessionId, value)
-        .then(languagesData => {
-          setLanguageOptions(languagesData.languages);
-
-          if (languagesData.info) {
-            setInfoMessage(languagesData.info);
-          }
-        }).catch(error => setErrorData(error));
+      promise = ControlsService.GetSkuInformationByKey(sessionId, value);
     } else {
-      return ControlsService.getLanguages(sessionId, value)
-        .then(languagesData => {
-          setLanguageOptions(languagesData.languages);
-
-          if (languagesData.info) {
-            setInfoMessage(languagesData.info);
-          }
-        }).catch(error => setErrorData(error));
+      promise = ControlsService.getLanguages(sessionId, value);
     }
+
+    return promise.then(languagesData => {
+      setLanguageOptions(languagesData.languages);
+
+      if (languagesData.info) {
+        setInfoMessage(languagesData.info);
+      }
+    }).catch(error => setErrorData(error));
   }
 
   // Dynamic components
