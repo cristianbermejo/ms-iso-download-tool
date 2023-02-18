@@ -1,15 +1,17 @@
 import { Button, Dropdown, DropdownProps, Input, InputProps, Label, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React from "react";
 import { useState } from "react";
+import { useCommonStyles } from "../commons/CommonStyles";
 import { Options } from "./Edition.options";
 import { EditionProps } from "./Edition.props";
 import { useStyles } from "./Edition.styles";
 
 export const Edition: React.FunctionComponent<EditionProps> = (props) => {
   // Styles
+  const commonClasses = useCommonStyles();
   const classes = useStyles();
-  const verticalStackWithChildrenGap = mergeClasses(classes.verticalStack, classes.verticalChildrenGap);
-  const horizontalStackWithChildrenGap = mergeClasses(classes.horizontalStack, classes.horizontalChildrenGap);
+  const verticalStackWithChildrenGap = mergeClasses(commonClasses.verticalStack, commonClasses.verticalChildrenGap);
+  const horizontalStackWithChildrenGap = mergeClasses(commonClasses.horizontalStack, commonClasses.horizontalChildrenGap);
 
   // IDs
   const dropdownId = useId();
@@ -52,12 +54,12 @@ export const Edition: React.FunctionComponent<EditionProps> = (props) => {
       <Title2>Download Windows Disk Image (ISO)</Title2>
       <Text>This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition.</Text>
       <div className={horizontalStackWithChildrenGap}>
-        <div className={classes.verticalStack}>
-          <Label htmlFor={dropdownId} className={classes.errorText}>{hasError && "Select an edition from the drop down menu."}</Label>
+        <div className={commonClasses.verticalStack}>
+          <Label htmlFor={dropdownId} className={commonClasses.errorText}>{hasError && "Select an edition from the drop down menu."}</Label>
           <Dropdown id={dropdownId}
             selectedOptions={selectedOptions}
             defaultSelectedOptions={[""]}
-            defaultValue="Select download"
+            defaultValue="Select Download"
             onOptionSelect={onOptionSelect}
           >
             {Options.map(option => {
@@ -70,8 +72,8 @@ export const Edition: React.FunctionComponent<EditionProps> = (props) => {
           </Dropdown>
         </div>
         <Text className={classes.verticallyAligned}>or</Text>
-        <div className={classes.verticalStack}>
-          <Label htmlFor={inputId} className={classes.errorText}>{hasError && "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/"}</Label>
+        <div className={commonClasses.verticalStack}>
+          <Label htmlFor={inputId} className={commonClasses.errorText}>{hasError && "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/"}</Label>
           <Input
             className={classes.productKeyInput}
             id={inputId}

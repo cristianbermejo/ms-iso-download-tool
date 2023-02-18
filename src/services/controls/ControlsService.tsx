@@ -30,7 +30,7 @@ function _findLanguages(result: string) {
 }
 
 export const ControlsService = {
-  getLanguages(sessionId: string, productEditionId: string): Promise<{ info?: string, languages: { value
+  getSkuInformationByProductEdition(sessionId: string, productEditionId: string): Promise<{ info?: string, languages: { value
     : string, text: string }[] }> {
     return WebClient.post([
       { name: "pageId", value: "a8f8f489-4c7f-463a-9ca6-5cff94d8d041" },

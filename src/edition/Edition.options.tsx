@@ -1,7 +1,7 @@
 export const Options = [
   {
     value: "",
-    text: "Select download",
+    text: "Select Download",
   },
   {
     value: "2370",
