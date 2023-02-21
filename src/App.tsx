@@ -21,7 +21,7 @@ export const App: React.FunctionComponent = () => {
 
   const [languageOptions, setLanguageOptions] = useState<{ value: string; text: string; }[]>([]);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
-  const [, setInfoMessage] = useState(defaultInfoMessage);
+  const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
 
   // Private functions
@@ -97,7 +97,7 @@ export const App: React.FunctionComponent = () => {
   return (
     <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
       <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
-      <Language options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
+      <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
       {downloadLinksStep}
       {errorDialog}
       <Image className={classes.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />

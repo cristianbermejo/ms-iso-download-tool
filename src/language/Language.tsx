@@ -50,6 +50,7 @@ export const Language: React.FunctionComponent<LanguageProps> = (props) => {
             <Text weight="bold">Region</Text>
             <Text> in Control Panel.</Text>
           </Text>
+          {props.infoMessage && <Text>{props.infoMessage}</Text>}
           <div className={commonClasses.verticalStack}>
             <Label htmlFor={dropdownId} className={commonClasses.errorText}>{hasError && "Select a language from the drop down menu."}</Label>
             <Dropdown id={dropdownId}
