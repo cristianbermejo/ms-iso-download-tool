@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Divider, Image, mergeClasses } from "@fluentui/react-components";
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Image, mergeClasses } from "@fluentui/react-components";
 import "./App.css";
-import { Step } from "./components/step/Step";
 import { ControlsService } from "./services/controls/ControlsService";
 import { useStyles } from "./commons/Styles";
 import Edition from "./edition";
 import Language from "./language";
+import Download from "./download";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
@@ -60,14 +60,6 @@ export const App: React.FunctionComponent = () => {
   };
 
   // Dynamic components
-  let downloadLinksStep = donwloadLinksData.links.length > defaultDownloadLinksData.links.length ? <>
-    <Divider />
-    <Step
-      title={donwloadLinksData.title}
-      linkButtons={donwloadLinksData.links}
-    />
-  </> : undefined;
-
   let errorDialog = <>
     <Dialog open={errorData.hasError} modalType="modal">
       <DialogSurface>
@@ -98,7 +90,7 @@ export const App: React.FunctionComponent = () => {
     <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
       <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
       <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
-      {downloadLinksStep}
+      <Download title={donwloadLinksData.title} links={donwloadLinksData.links} />
       {errorDialog}
       <Image className={classes.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
     </div>
