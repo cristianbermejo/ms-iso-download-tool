@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Image, mergeClasses } from "@fluentui/react-components";
 import "./App.css";
-import { ControlsService } from "./services/controls/ControlsService";
-import { useStyles } from "./commons/Styles";
-import Edition from "./edition";
-import Language from "./language";
-import Download from "./download";
+import ControlsService from "./services/controls";
+import useCommonStyles from "./commons/styles";
+import Edition from "./views/edition";
+import Language from "./views/language";
+import Download from "./views/download";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
 
 export const App: React.FunctionComponent = () => {
   // Styles
-  const classes = useStyles();
+  const commonClasses = useCommonStyles();
+  const verticalStackWithChildrenGap = mergeClasses(commonClasses.verticalStack, commonClasses.verticalChildrenGap);
 
   // Data and their default values
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
@@ -30,6 +31,11 @@ export const App: React.FunctionComponent = () => {
     setDownloadLinksData(defaultDownloadLinksData);
   };
   const onLanguageValueChange = () => setDownloadLinksData(defaultDownloadLinksData);
+  const onErrorDialogButtonClick = () => setErrorData({
+    title: errorData.title,
+    message: errorData.message,
+    hasError: false
+  });
   const loadLanguages = (value: string, isProductKey: boolean): Promise<void> => {
     let promise;
     if (isProductKey) {
@@ -59,40 +65,29 @@ export const App: React.FunctionComponent = () => {
       }).catch(error => setErrorData(error));
   };
 
-  // Dynamic components
-  let errorDialog = <>
-    <Dialog open={errorData.hasError} modalType="modal">
-      <DialogSurface>
-        <DialogBody>
-          <DialogTitle>{errorData.title}</DialogTitle>
-          <DialogContent>
-            <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
-          </DialogContent>
-          <DialogActions>
-            <DialogTrigger disableButtonEnhancement>
-              <Button appearance="primary"
-                onClick={() => setErrorData({
-                  title: errorData.title,
-                  message: errorData.message,
-                  hasError: false
-                }
-                )}>
-                Close
-              </Button>
-            </DialogTrigger>
-          </DialogActions>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
-  </>;
-
   return (
-    <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
-      <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
-      <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
-      <Download title={donwloadLinksData.title} links={donwloadLinksData.links} />
-      {errorDialog}
-      <Image className={classes.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
+    <div>
+      <div className={verticalStackWithChildrenGap}>
+        <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
+        <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
+        <Download title={donwloadLinksData.title} links={donwloadLinksData.links} />
+      </div>
+      <Dialog open={errorData.hasError} modalType="modal">
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>{errorData.title}</DialogTitle>
+            <DialogContent>
+              <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
+            </DialogContent>
+            <DialogActions>
+              <DialogTrigger disableButtonEnhancement>
+                <Button appearance="primary" onClick={onErrorDialogButtonClick}>Close</Button>
+              </DialogTrigger>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+      <Image className={commonClasses.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
     </div>
   );
 };

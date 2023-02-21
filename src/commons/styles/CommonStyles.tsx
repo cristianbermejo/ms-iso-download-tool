@@ -4,6 +4,9 @@ export const useCommonStyles = makeStyles({
   errorText: {
     color: "#F00",
   },
+  hidden: {
+    display: "none",
+  },
   horizontalStack: {
     display: "flex",
     flexDirection: "row",

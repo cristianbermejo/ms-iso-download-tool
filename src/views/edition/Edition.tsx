@@ -1,7 +1,7 @@
 import { Button, Dropdown, DropdownProps, Input, InputProps, Label, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React from "react";
 import { useState } from "react";
-import { useCommonStyles } from "../commons/CommonStyles";
+import { useCommonStyles } from "../../commons/styles/CommonStyles";
 import { Options } from "./Edition.options";
 import { EditionProps } from "./Edition.props";
 import { useStyles } from "./Edition.styles";

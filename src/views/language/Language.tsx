@@ -1,7 +1,7 @@
 import { Button, Divider, Dropdown, DropdownProps, Label, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
 import React from "react";
 import { useState } from "react";
-import { useCommonStyles } from "../commons/CommonStyles";
+import { useCommonStyles } from "../../commons/styles/CommonStyles";
 import { LanguageProps } from "./Language.props";
 
 export const Language: React.FunctionComponent<LanguageProps> = (props) => {

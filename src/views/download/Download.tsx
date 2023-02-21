@@ -1,6 +1,6 @@
 import { Button, Divider, mergeClasses, Title2 } from "@fluentui/react-components";
 import React from "react";
-import { useCommonStyles } from "../commons/CommonStyles";
+import { useCommonStyles } from "../../commons/styles/CommonStyles";
 import { DownloadProps } from "./Download.props";
 
 export const Download: React.FunctionComponent<DownloadProps> = (props) => {

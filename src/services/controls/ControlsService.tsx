@@ -1,6 +1,7 @@
 import { WebClient } from "./WebClient";
 
-function _findLanguages(result: string) {
+// Private functions
+const findLanguages = (result: string) => {
   let div = document.createElement("div");
   div.innerHTML = result;
 
@@ -41,7 +42,7 @@ export const ControlsService = {
       { name: "sessionId", value: sessionId },
       { name: "productEditionId", value: productEditionId },
       { name: "sdVersion", value: "2" }
-    ]).then(result => _findLanguages(result));
+    ]).then(result => findLanguages(result));
   },
   getDownloadLinks(sessionId: string, skuId: string, skuLanguage: string): Promise<{ title: string, links: { text: string, url: string }[], expires: number }> {
     let storedValue = JSON.parse(localStorage.getItem(`${skuId}-${skuLanguage}`) || "{}");
@@ -103,6 +104,6 @@ export const ControlsService = {
       { name: "action", value: "GetSkuInformationByKey" },
       { name: "key", value: key },
       { name: "sessionId", value: sessionId }
-    ]).then(result => _findLanguages(result));
+    ]).then(result => findLanguages(result));
   }
 };
