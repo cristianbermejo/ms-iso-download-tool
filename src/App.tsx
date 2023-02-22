@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Divider, Image, mergeClasses, Text } from "@fluentui/react-components";
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Image, mergeClasses } from "@fluentui/react-components";
 import "./App.css";
-import { Step } from "./components/step/Step";
-import { ControlsService } from "./services/controls/ControlsService";
-import importedEditionOptions from "./res/editionOptions.json";
-import { useStyles } from "./commons/Styles";
+import ControlsService from "./services/controls";
+import useCommonStyles from "./commons/styles";
+import Edition from "./views/edition";
+import Language from "./views/language";
+import Download from "./views/download";
+import { useStyles } from "./App.styles";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
@@ -12,46 +14,48 @@ const sessionId: string = crypto.randomUUID();
 export const App: React.FunctionComponent = () => {
   // Styles
   const classes = useStyles();
+  const commonClasses = useCommonStyles();
+  const verticalStackWithChildrenGap = mergeClasses(commonClasses.verticalStack, commonClasses.verticalChildrenGap);
 
   // Data and their default values
-  const defaultEditionOption: { value: string, text: string, disabled?: boolean, title?: string } = { value: "", text: "Select Download" };
-  const defaultLanguageOption: { value: string; text: string; } = { value: "", text: "Choose one" };
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
   const defaultInfoMessage: string = "";
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
 
-  const [editionOptions,] = useState([defaultEditionOption].concat(importedEditionOptions));
-  const [languageOptions, setLanguageOptions] = useState([defaultLanguageOption]);
+  const [languageOptions, setLanguageOptions] = useState<{ value: string; text: string; }[]>([]);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
   const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
 
   // Private functions
-  function _loadLanguages(productEditionId: string): Promise<void> {
-    if (editionOptions.find(option => option.value === productEditionId)) {
-      return ControlsService.getLanguages(sessionId, productEditionId)
-        .then(languagesData => {
-          setLanguageOptions(languagesData.languages);
-
-          if (languagesData.info) {
-            setInfoMessage(languagesData.info);
-          }
-        }).catch(error => setErrorData(error));
+  const onEditionValueChange = () => {
+    setLanguageOptions([]);
+    setDownloadLinksData(defaultDownloadLinksData);
+  };
+  const onLanguageValueChange = () => setDownloadLinksData(defaultDownloadLinksData);
+  const onErrorDialogButtonClick = () => setErrorData({
+    title: errorData.title,
+    message: errorData.message,
+    hasError: false
+  });
+  const loadLanguages = (value: string, isProductKey: boolean): Promise<void> => {
+    let promise;
+    if (isProductKey) {
+      promise = ControlsService.GetSkuInformationByKey(sessionId, value);
     } else {
-      return ControlsService.GetSkuInformationByKey(sessionId, productEditionId)
-        .then(languagesData => {
-          setLanguageOptions(languagesData.languages);
-
-          if (languagesData.info) {
-            setInfoMessage(languagesData.info);
-          }
-        }).catch(error => setErrorData(error));
+      promise = ControlsService.getSkuInformationByProductEdition(sessionId, value);
     }
-  }
 
-  function _loadDownloadLinks(languageData: string): Promise<void> {
+    return promise.then(languagesData => {
+      setLanguageOptions(languagesData.languages);
+
+      if (languagesData.info) {
+        setInfoMessage(languagesData.info);
+      }
+    }).catch(error => setErrorData(error));
+  };
+  const loadDownloadLinks = (languageData: string): Promise<void> => {
     let key = JSON.parse(languageData);
-
     return ControlsService.getDownloadLinks(sessionId, key.id, key.language)
       .then(downloadLinks => {
         setDownloadLinksData({
@@ -61,87 +65,31 @@ export const App: React.FunctionComponent = () => {
           })
         });
       }).catch(error => setErrorData(error));
-  }
-
-  // Dynamic components
-  let editionsStep = <>
-    <Step
-      title="Download Windows Disk Image (ISO)"
-      description="This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition."
-      options={editionOptions}
-      defaultSelectedOption={defaultEditionOption}
-      placeholder="Enter product key"
-      onChange={() => {
-        setLanguageOptions([defaultLanguageOption]);
-        setDownloadLinksData(defaultDownloadLinksData);
-      }}
-      errorMessages={{ dropdown: "Select an edition from the drop down menu.", textfield: "Your license key must contain 25 letters and numbers and no special characters: ()[].-#*/" }}
-      actionButton={{ text: "Download", onClick: _loadLanguages }}
-    />
-  </>;
-  let languagesStep = languageOptions.length > 1 ? <>
-    <Divider />
-    <Step
-      title="Select the product language"
-      description={
-        <Text>
-          <Text>You'll need to choose the same language when you install Windows. To see what language you're currently using, go to </Text>
-          <Text weight="bold">Time and language</Text>
-          <Text> in PC settings or </Text>
-          <Text weight="bold">Region</Text>
-          <Text> in Control Panel.</Text>
-        </Text>
-      }
-      options={languageOptions}
-      defaultSelectedOption={defaultLanguageOption}
-      onChange={() => setDownloadLinksData(defaultDownloadLinksData)}
-      infoMessage={infoMessage}
-      errorMessages={{ dropdown: "Select a language from the drop down menu." }}
-      actionButton={{ text: "Confirm", onClick: _loadDownloadLinks }}
-    />
-  </> : undefined;
-
-  let downloadLinksStep = donwloadLinksData.links.length > defaultDownloadLinksData.links.length ? <>
-    <Divider />
-    <Step
-      title={donwloadLinksData.title}
-      linkButtons={donwloadLinksData.links}
-    />
-  </> : undefined;
-
-  let errorDialog = <>
-    <Dialog open={errorData.hasError} modalType="modal">
-      <DialogSurface>
-        <DialogBody>
-          <DialogTitle>{errorData.title}</DialogTitle>
-          <DialogContent>
-            <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
-          </DialogContent>
-          <DialogActions>
-            <DialogTrigger disableButtonEnhancement>
-              <Button appearance="primary"
-                onClick={() => setErrorData({
-                  title: errorData.title,
-                  message: errorData.message,
-                  hasError: false
-                  }
-                )}>
-                  Close
-                </Button>
-            </DialogTrigger>
-          </DialogActions>
-        </DialogBody>
-      </DialogSurface>
-    </Dialog>
-  </>;
+  };
 
   return (
-    <div className={mergeClasses(classes.flexColumn, classes.topGap, classes.fiftyPadding)}>
-      {editionsStep}
-      {languagesStep}
-      {downloadLinksStep}
-      {errorDialog}
-      <Image className={classes.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
+    <div className={classes.fiftyPaddding}>
+      <div className={verticalStackWithChildrenGap}>
+        <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
+        <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
+        <Download title={donwloadLinksData.title} links={donwloadLinksData.links} />
+      </div>
+      <Dialog open={errorData.hasError} modalType="modal">
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>{errorData.title}</DialogTitle>
+            <DialogContent>
+              <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
+            </DialogContent>
+            <DialogActions>
+              <DialogTrigger disableButtonEnhancement>
+                <Button appearance="primary" onClick={onErrorDialogButtonClick}>Close</Button>
+              </DialogTrigger>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+      <Image className={commonClasses.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
     </div>
   );
 };
