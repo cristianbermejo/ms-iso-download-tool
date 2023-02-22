@@ -6,12 +6,14 @@ import useCommonStyles from "./commons/styles";
 import Edition from "./views/edition";
 import Language from "./views/language";
 import Download from "./views/download";
+import { useStyles } from "./App.styles";
 
 // Constant values
 const sessionId: string = crypto.randomUUID();
 
 export const App: React.FunctionComponent = () => {
   // Styles
+  const classes = useStyles();
   const commonClasses = useCommonStyles();
   const verticalStackWithChildrenGap = mergeClasses(commonClasses.verticalStack, commonClasses.verticalChildrenGap);
 
@@ -66,7 +68,7 @@ export const App: React.FunctionComponent = () => {
   };
 
   return (
-    <div>
+    <div className={classes.fiftyPaddding}>
       <div className={verticalStackWithChildrenGap}>
         <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
         <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
