@@ -61,6 +61,7 @@ export const Edition: React.FunctionComponent<EditionProps> = (props) => {
             defaultSelectedOptions={[""]}
             defaultValue="Select Download"
             onOptionSelect={onOptionSelect}
+            positioning="after"
           >
             {Options.map(option => {
               return (
