@@ -58,6 +58,7 @@ export const Language: React.FunctionComponent<LanguageProps> = (props) => {
               defaultSelectedOptions={[""]}
               defaultValue="Choose one"
               onOptionSelect={onOptionSelect}
+              positioning="after"
             >
               {props.options.map(option => {
                 return (
