@@ -1,4 +1,4 @@
-import { Button, Dropdown, DropdownProps, Input, InputProps, Label, mergeClasses, Option, Spinner, Text, Title2, useId } from "@fluentui/react-components";
+import { Button, Dropdown, DropdownProps, Input, InputProps, Label, mergeClasses, Option, Spinner, Text, useId } from "@fluentui/react-components";
 import React from "react";
 import { useState } from "react";
 import { useCommonStyles } from "../../commons/styles/CommonStyles";
@@ -51,7 +51,6 @@ export const Edition: React.FunctionComponent<EditionProps> = (props) => {
 
   return (
     <div className={verticalStackWithChildrenGap}>
-      <Title2>Download Windows Disk Image (ISO)</Title2>
       <Text>This option is for users that want to create a bootable installation media (USB flash drive, DVD) or create a virtual machine (.ISO file) to install Windows. This download is a multi-edition ISO which uses your product key to unlock the correct edition.</Text>
       <div className={horizontalStackWithChildrenGap}>
         <div className={commonClasses.verticalStack}>

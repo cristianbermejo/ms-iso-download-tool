@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Image, mergeClasses } from "@fluentui/react-components";
+import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogSurface, DialogTitle, DialogTrigger, Image, mergeClasses, Subtitle1 } from "@fluentui/react-components";
 import "./App.css";
 import ControlsService from "./services/controls";
 import useCommonStyles from "./commons/styles";
@@ -21,11 +21,13 @@ export const App: React.FunctionComponent = () => {
   const defaultDownloadLinksData: { title: string; links: { text: string; url: string }[] } = { title: "", links: [] };
   const defaultInfoMessage: string = "";
   const defaultErrorData: { title: string, message: string, hasError: boolean } = { title: "", message: "", hasError: false };
+  const defaultTitle: string = "Download Disk Image (ISO)";
 
   const [languageOptions, setLanguageOptions] = useState<{ value: string; text: string; }[]>([]);
   const [donwloadLinksData, setDownloadLinksData] = useState(defaultDownloadLinksData);
   const [infoMessage, setInfoMessage] = useState(defaultInfoMessage);
   const [errorData, setErrorData] = useState(defaultErrorData);
+  const [title,] = useState(defaultTitle);
 
   // Private functions
   const onEditionValueChange = () => {
@@ -68,28 +70,33 @@ export const App: React.FunctionComponent = () => {
   };
 
   return (
-    <div className={classes.fiftyPaddding}>
-      <div className={verticalStackWithChildrenGap}>
-        <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
-        <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
-        <Download title={donwloadLinksData.title} links={donwloadLinksData.links} />
+    <div>
+      <div className={classes.head}>
+          <Subtitle1>{title}</Subtitle1>
       </div>
-      <Dialog open={errorData.hasError} modalType="modal">
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>{errorData.title}</DialogTitle>
-            <DialogContent>
-              <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
-            </DialogContent>
-            <DialogActions>
-              <DialogTrigger disableButtonEnhancement>
-                <Button appearance="primary" onClick={onErrorDialogButtonClick}>Close</Button>
-              </DialogTrigger>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
-      <Image className={commonClasses.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
+      <div className={classes.fiftyPaddding}>
+        <div className={verticalStackWithChildrenGap}>
+          <Edition onValueChange={onEditionValueChange} onClick={loadLanguages} />
+          <Language infoMessage={infoMessage} options={languageOptions} onValueChange={onLanguageValueChange} onClick={loadDownloadLinks} />
+          <Download title={donwloadLinksData.title} links={donwloadLinksData.links} />
+        </div>
+        <Dialog open={errorData.hasError} modalType="modal">
+          <DialogSurface>
+            <DialogBody>
+              <DialogTitle>{errorData.title}</DialogTitle>
+              <DialogContent>
+                <p dangerouslySetInnerHTML={{ __html: errorData.message }} />
+              </DialogContent>
+              <DialogActions>
+                <DialogTrigger disableButtonEnhancement>
+                  <Button appearance="primary" onClick={onErrorDialogButtonClick}>Close</Button>
+                </DialogTrigger>
+              </DialogActions>
+            </DialogBody>
+          </DialogSurface>
+        </Dialog>
+        <Image className={commonClasses.hidden} src={`https://vlscppe.microsoft.com/fp/clear.png?org_id=y6jn8c31&session_id=${sessionId}`} />
+      </div>
     </div>
   );
 };
